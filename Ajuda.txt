@@ -1,0 +1,21 @@
+Pdf to base64
+
+    args[0]     caminho_entrada.pdf
+
+
+
+https://stackoverflow.com/questions/475421/base64-encode-a-pdf-in-c
+
+    There is a way that you can do this in chunks so that you don't have to burn a ton of memory all at once.
+
+    .Net includes an encoder that can do the chunking, but it's in kind of a weird place. They put it in the System.Security.Cryptography namespace.
+
+    I have tested the example code below, and I get identical output using either my method or Andrew's method above.
+
+    Here's how it works: You fire up a class called a CryptoStream. This is kind of an adapter that plugs into another stream. You plug a class called CryptoTransform into the CryptoStream (which in turn is attached to your file/memory/network stream) and it performs data transformations on the data while it's being read from or written to the stream.
+
+    Normally, the transformation is encryption/decryption, but .net includes ToBase64 and FromBase64 transformations as well, so we won't be encrypting, just encoding.
+
+    I am also playing around with where I attach the CryptoStream. In the Encode method,I am attaching it to the output (writing) stream, so when I instance the CryptoStream, I use its Write() method.
+
+    When I read, I'm attaching it to the input (reading) stream, so I use the read method on the CryptoStream. It doesn't really matter which stream I attach it to. I just have to pass the appropriate Read or Write enumeration member to the CryptoStream's constructor.
